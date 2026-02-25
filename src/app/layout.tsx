@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Source_Serif_4, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const dmSerif = DM_Serif_Display({
   weight: "400",
@@ -35,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSerif.variable} ${sourceSerif.variable} ${ibmPlex.variable}`}>
       <body className="antialiased min-h-screen paper-texture">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
