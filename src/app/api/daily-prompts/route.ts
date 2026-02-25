@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 const DAILY_PROMPTS = [
   "What insight surprised you today?",
   "What friction did you encounter?",

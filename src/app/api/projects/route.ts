@@ -3,15 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const session = await getServerSession(authOptions);
+  const userId = (session?.user as any)?.id;
   
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const projects = await prisma.project.findMany({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { updatedAt: "desc" },
     include: {
       _count: {
@@ -25,8 +28,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
+  const userId = (session?.user as any)?.id;
   
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,7 +47,7 @@ export async function POST(request: Request) {
       description: description?.trim(),
       status: status || "active",
       targetDate: targetDate ? new Date(targetDate) : null,
-      userId: session.user.id,
+      userId,
     },
   });
 

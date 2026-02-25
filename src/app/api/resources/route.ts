@@ -3,15 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const session = await getServerSession(authOptions);
+  const userId = (session?.user as any)?.id;
   
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const resources = await prisma.resource.findMany({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { updatedAt: "desc" },
     include: {
       _count: {
@@ -25,8 +28,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
+  const userId = (session?.user as any)?.id;
   
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
     data: {
       name: name.trim(),
       description: description?.trim(),
-      userId: session.user.id,
+      userId,
     },
   });
 
